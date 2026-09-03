@@ -33,7 +33,7 @@ A modern, resilient, and compliant **Clinic Invoice & Front-Desk POS Billing Sys
 ## 📖 User Roles & Operating Workflows
 
 Comprehensive step-by-step guides, role comparison matrices, and process flowcharts are documented in:
-👉 **[User Roles & Workflows Guide](cis/user_roles_and_workflows.md)**
+👉 **[User Roles & Workflows Guide](user_roles_and_workflows.md)**
 
 ### Quick Role Permissions Matrix
 
