@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ClinicFlow (CIS) — Enterprise Medical Practice &amp; POS Billing Suite</title>
+    
+    <!-- Meta SEO & OpenGraph -->
+    <meta name="description" content="Next-generation Malaysian Clinic Management, POS Billing, and Tax Invoicing system built with Laravel 12 and Tailwind CSS. SST Act 2018 compliant, 80mm thermal & A4 invoice printing.">
+    <meta property="og:title" content="ClinicFlow — Enterprise Medical Billing & POS System">
+    <meta property="og:description" content="Precision clinical billing, itemized catalog multi-select, dual print engine, and multi-channel front-desk cashier settlement.">
+    <meta property="og:type" content="website">
+
+    <!-- Google Fonts & Boxicons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                            950: '#1e1b4b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.35); border-radius: 9999px; }
+        .glow-radial {
+            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.22) 0%, rgba(30, 27, 75, 0.05) 50%, transparent 80%);
+        }
+        .hero-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.05); }
+        }
+        .animate-glow {
+            animation: pulseGlow 6s ease-in-out infinite;
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
+            #printable-area { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-indigo-600 selection:text-white min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+    <!-- Ambient Gradient Blobs -->
+    <div class="absolute inset-0 glow-radial pointer-events-none -z-10"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[550px] bg-gradient-to-tr from-indigo-600/20 via-purple-600/15 to-indigo-800/20 blur-[150px] rounded-full pointer-events-none -z-10 animate-glow"></div>
+
+    <!-- Header Navigation -->
+    <header class="w-full border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3.5 group">
+                <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30 border border-indigo-400/30 group-hover:scale-105 transition-transform">
+                    <i class="bx bx-receipt text-2xl font-bold"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-indigo-100 to-indigo-300 bg-clip-text text-transparent">
+                        Clinic<span class="text-indigo-400">Flow</span>
+                    </span>
+                    <span class="hidden sm:inline-block ml-2 px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase bg-indigo-500/20 text-indigo-300 rounded-full border border-indigo-400/30">
+                        Enterprise Edition
+                    </span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-300">
+                <a href="#features" class="hover:text-white transition">Features</a>
+                <a href="#interactive-pos" class="hover:text-indigo-400 transition flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Live POS Simulator
+                </a>
+                <a href="#sst-compliance" class="hover:text-white transition">Malaysian SST</a>
+                <a href="#modules" class="hover:text-white transition">Architecture</a>
+                <a href="#quickstart" class="hover:text-white transition">Quickstart</a>
+            </nav>
+
+            <!-- Quick Action Buttons -->
+            <div class="flex items-center gap-3">
+                <a href="#interactive-pos" class="hidden sm:inline-flex px-4 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700/80 border border-slate-700 transition items-center gap-1.5">
+                    <i class="bx bx-play-circle text-indigo-400 text-sm"></i>
+                    <span>Try Simulator</span>
+                </a>
+                <a href="https://github.com/mralif93/clinic-invoice-system" target="_blank" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 border border-indigo-400/30 transition flex items-center gap-1.5 transform hover:-translate-y-0.5">
+                    <i class="bx bxl-github text-base"></i>
+                    <span>View GitHub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Stream -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-24">
+
+        <!-- 1. Hero Showcase Banner -->
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950/90 via-slate-900 to-indigo-900/90 p-8 sm:p-14 lg:p-16 shadow-2xl border border-indigo-800/40 hero-pattern text-white">
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                
+                <!-- Left: Headline & Call To Action -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 inline-flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Production Ready &bull; Laravel 12
+                        </span>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
+                            🇲🇾 Service Tax Regulations 2018
+                        </span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.12]">
+                        Next-Gen Clinical POS &amp; Medical Invoicing
+                    </h1>
+
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl font-normal">
+                        Designed for Malaysian GP clinics, specialist centers, and dental surgeries. Experience instant catalog checkboxes, live SST exemptions (0% / 6% / 8%), multi-channel front-desk tender, and real-time A4 PDF &amp; 80mm ESC/POS thermal receipts.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="flex flex-wrap items-center gap-3 pt-2">
+                        <a href="#interactive-pos" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-600/40 border border-indigo-400/30 transition-all transform hover:-translate-y-0.5">
+                            <i class="bx bx-play-circle text-lg"></i>
+                            <span>Launch Live POS Simulator</span>
+                        </a>
+                        <a href="https://github.com/mralif93/clinic-invoice-system" target="_blank" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm bg-slate-800 text-slate-200 hover:text-white border border-slate-700 transition">
+                            <i class="bx bxl-github text-lg"></i>
+                            <span>Clone Source Code</span>
+                        </a>
+                    </div>
+
+                    <!-- Tech Stack Badges -->
+                    <div class="pt-4 flex items-center gap-4 text-xs text-slate-400 font-mono">
+                        <span class="flex items-center gap-1"><i class="bx bxl-php text-base text-indigo-400"></i> PHP 8.2+</span>
+                        <span>&bull;</span>
+                        <span class="flex items-center gap-1"><i class="bx bxl-tailwind-css text-base text-cyan-400"></i> Tailwind CSS</span>
+                        <span>&bull;</span>
+                        <span class="flex items-center gap-1"><i class="bx bx-check-shield text-base text-emerald-400"></i> 43 Tests Passing</span>
+                    </div>
+                </div>
+
+                <!-- Right: High-Impact Mockup Card -->
+                <div class="lg:col-span-5 space-y-3">
+                    <div class="p-6 rounded-2xl bg-slate-900/95 border border-indigo-700/40 shadow-2xl space-y-4 backdrop-blur-md">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xl">
+                                    <i class="bx bx-receipt"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-white uppercase tracking-wider">Live Invoice Benchmark</div>
+                                    <div class="text-[11px] text-slate-400 font-mono">INV-20260903-0001</div>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
+                                <i class="bx bx-check-circle"></i> Settled
+                            </span>
+                        </div>
+
+                        <div class="space-y-2.5 text-xs text-slate-300">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Patient Profile:</span>
+                                <span class="font-bold text-white">Ahmad Rahman (IC: 990719-08-6505)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Attending Doctor:</span>
+                                <span class="font-bold text-white">Dr. Aiman Hakim (ADM-001)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Allergy Alert:</span>
+                                <span class="px-2 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-800 font-mono text-[10px]">Penicillin</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Tax Status:</span>
+                                <span class="font-mono text-emerald-400 font-bold">0% SST Healthcare Exempt</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2.5 border-t border-slate-800 text-slate-200">
+                                <span class="font-bold text-white">Total Settled:</span>
+                                <span class="font-mono text-xl font-black text-emerald-400">RM 75.50</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-800">
+                            <span class="flex items-center gap-1.5"><i class="bx bx-qr-scan text-indigo-400"></i> DuitNow QR Pay</span>
+                            <span class="font-mono text-slate-400">Ref: #RRN-9948201</span>
+                        </div>
+                    </div>
+
+                    <!-- Mini KPI Row -->
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                            <div class="text-slate-400 text-[10px] font-medium">Front-Desk SLA</div>
+                            <div class="text-base font-mono font-bold text-indigo-300">&lt; 300 ms</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                            <div class="text-slate-400 text-[10px] font-medium">Print Outputs</div>
+                            <div class="text-base font-bold text-indigo-300">A4 PDF &amp; 80mm</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 2. Core Value Proposition Grid -->
+        <section id="features" class="space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Why ClinicFlow?</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Engineered for Rapid Front-Desk Operations</h2>
+                <p class="text-slate-400 text-xs sm:text-sm">Eliminate billing bottlenecks, calculate Malaysian SST accurately, and ensure end-of-day drawer reconciliation in minutes.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
+                
+                <!-- Card 1 -->
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition shadow-lg space-y-3">
+                    <div class="w-11 h-11 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl">
+                        <i class="bx bx-table"></i>
+                    </div>
+                    <h3 class="font-bold text-base text-white">Table List with Checkboxes</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Say goodbye to cluttered pill clouds. Filter 50+ master treatments by category tabs with real-time text lookup and 10-row smooth scroll.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition shadow-lg space-y-3">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl">
+                        <i class="bx bx-shield-quarter"></i>
+                    </div>
+                    <h3 class="font-bold text-base text-white">Malaysian SST Act 2018</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Automatic 0% exemption for healthcare services and prescription drugs. Supports 6% and 8% rates for retail non-clinical items.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition shadow-lg space-y-3">
+                    <div class="w-11 h-11 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-2xl">
+                        <i class="bx bx-printer"></i>
+                    </div>
+                    <h3 class="font-bold text-base text-white">Dual Output Printing</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Automatic popup preview before printing. Choose between formal A4 medical tax invoices or high-speed 80mm ESC/POS thermal slips.
+                    </p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition shadow-lg space-y-3">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl">
+                        <i class="bx bx-coin-stack"></i>
+                    </div>
+                    <h3 class="font-bold text-base text-white">Cash Drawer &amp; EDC Recon</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Daily cash drawer balancing with system-vs-actual variance tracking, plus batch tally reconciliation for credit card EDC terminals.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. Live Interactive POS Billing Simulator -->
+        <section id="interactive-pos" class="space-y-6 pt-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+                        <i class="bx bx-play-circle text-base"></i> Real-Time Interactive Simulator
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Live Front-Desk POS Workstation</h2>
+                </div>
+                <p class="text-xs text-slate-400 font-mono">Select items with checkboxes, switch categories, and preview printable receipts!</p>
+            </div>
+
+            <!-- Two-Column POS Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Left Column: Catalog & Billed Line Items (8 Cols) -->
+                <div class="lg:col-span-8 space-y-6">
+                    
+                    <!-- Patient & Physician Pill Banner -->
+                    <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs shadow-md">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-xl font-bold">
+                                <i class="bx bx-user"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-white text-sm">Ahmad Rahman <span class="text-[10px] px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-normal ml-1">Allergy: Penicillin</span></div>
+                                <div class="text-slate-400 font-mono mt-0.5">IC: 990719-08-6505 &bull; +6015-748 9554</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Attending Doctor</span>
+                            <div class="font-bold text-indigo-400 text-xs">Dr. Aiman Hakim (ADM-001)</div>
+                        </div>
+                    </div>
+
+                    <!-- Catalog Table with Checkboxes -->
+                    <div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden shadow-xl">
+                        
+                        <!-- Catalog Header & Controls -->
+                        <div class="p-4 border-b border-slate-800 space-y-3 bg-slate-900/70">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                
+                                <!-- Category Switcher -->
+                                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 custom-scrollbar text-xs font-semibold text-slate-400">
+                                    <button type="button" onclick="filterCat('all')" id="btn-cat-all" class="cat-pill px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold transition whitespace-nowrap cursor-pointer">
+                                        All (12)
+                                    </button>
+                                    <button type="button" onclick="filterCat('consultation')" id="btn-cat-consultation" class="cat-pill px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                                        <i class="bx bx-pulse text-indigo-400"></i> Consultation (3)
+                                    </button>
+                                    <button type="button" onclick="filterCat('medication')" id="btn-cat-medication" class="cat-pill px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                                        <i class="bx bx-capsule text-indigo-400"></i> Medication (4)
+                                    </button>
+                                    <button type="button" onclick="filterCat('procedure')" id="btn-cat-procedure" class="cat-pill px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                                        <i class="bx bx-plus-medical text-indigo-400"></i> Procedure (3)
+                                    </button>
+                                    <button type="button" onclick="filterCat('lab')" id="btn-cat-lab" class="cat-pill px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                                        <i class="bx bx-test-tube text-indigo-400"></i> Lab (2)
+                                    </button>
+                                </div>
+
+                                <!-- Real-time Filter -->
+                                <div class="relative w-full sm:w-56 shrink-0">
+                                    <i class="bx bx-search absolute left-3 top-2 text-slate-400 text-sm"></i>
+                                    <input type="text" id="catalog-search" oninput="searchItems()" placeholder="Search item or code..." class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 10-Row Scrollable Table -->
+                        <div class="max-h-[380px] overflow-y-auto custom-scrollbar">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-900 text-slate-400 font-bold uppercase tracking-wider text-[10px] sticky top-0 z-10 border-b border-slate-800 bg-slate-900/95 backdrop-blur-xs">
+                                    <tr>
+                                        <th class="py-2.5 px-3 w-10 text-center"><i class="bx bx-check-square text-base text-slate-400"></i></th>
+                                        <th class="py-2.5 px-3">Item / Service</th>
+                                        <th class="py-2.5 px-3 hidden sm:table-cell w-28">Category</th>
+                                        <th class="py-2.5 px-3 w-28 text-right">Unit Price</th>
+                                        <th class="py-2.5 px-3 w-16 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="catalog-tbody" class="divide-y divide-slate-800/80">
+                                    <!-- Populated via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Billed Invoice Line Items Table -->
+                    <div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden shadow-xl">
+                        <div class="p-3.5 bg-slate-800/60 border-b border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="bx bx-receipt text-indigo-400 text-base"></i>
+                                <span class="font-extrabold text-white text-xs uppercase tracking-wider">Billed Line Items</span>
+                            </div>
+                            <span class="text-[10px] text-slate-400">Live quantity adjustments &amp; line discounts</span>
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left text-xs text-slate-300 min-w-[550px]">
+                                <thead class="bg-slate-900 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-800">
+                                    <tr>
+                                        <th class="py-3 px-4">Description / Item</th>
+                                        <th class="py-3 px-3 w-24 text-center">Qty</th>
+                                        <th class="py-3 px-3 w-28 text-right">Price (RM)</th>
+                                        <th class="py-3 px-3 w-28 text-right">Disc (RM)</th>
+                                        <th class="py-3 px-3 w-32 text-right">Total (RM)</th>
+                                        <th class="py-3 px-3 w-10 text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billed-tbody" class="divide-y divide-slate-800/80">
+                                    <!-- Dynamic Billed Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Calculation Summary & Settlement (4 Cols) -->
+                <div class="lg:col-span-4 space-y-6">
+
+                    <!-- Calculation Summary Card -->
+                    <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-base">
+                                    <i class="bx bx-calculator"></i>
+                                </div>
+                                <span class="font-bold text-white text-sm">Calculation Summary</span>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                                SST Act 2018
+                            </span>
+                        </div>
+
+                        <div class="space-y-2.5 text-xs text-slate-300">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Gross Line Items:</span>
+                                <span class="font-mono font-bold text-white" id="summary-gross">RM 0.00</span>
+                            </div>
+
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-400">Special Discount:</span>
+                                <input type="number" id="summary-discount" value="0.00" step="1" min="0" oninput="recalc()" class="w-24 py-1 px-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-right font-mono text-white focus:outline-none focus:border-indigo-500">
+                            </div>
+
+                            <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+                                <div class="flex items-center gap-1 text-slate-400">
+                                    <span>Service Tax (SST):</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <select id="summary-sst-rate" onchange="recalc()" class="py-1 px-2 rounded-lg bg-slate-800 border border-slate-700 text-[11px] text-white focus:outline-none">
+                                        <option value="0" selected>0% (Exempt)</option>
+                                        <option value="6">6% (SST Rate)</option>
+                                        <option value="8">8% (Standard SST)</option>
+                                    </select>
+                                    <span class="font-mono font-bold text-white" id="summary-tax">RM 0.00</span>
+                                </div>
+                            </div>
+
+                            <div class="pt-3 border-t border-slate-800 flex justify-between items-baseline">
+                                <span class="font-bold text-slate-200">Grand Total:</span>
+                                <span class="font-mono text-2xl font-black text-emerald-400" id="summary-grand">RM 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Front-Desk Settlement Card -->
+                    <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-base">
+                                    <i class="bx bx-credit-card"></i>
+                                </div>
+                                <span class="font-bold text-white text-sm">Front-Desk Settlement</span>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                                Real-Time POS
+                            </span>
+                        </div>
+
+                        <div class="space-y-3 text-xs">
+                            <div>
+                                <div class="flex justify-between text-slate-400 mb-1">
+                                    <span>Payment Tendered</span>
+                                    <button type="button" onclick="setExact()" class="text-indigo-400 hover:text-indigo-300 font-mono font-bold cursor-pointer">[exact amount]</button>
+                                </div>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2.5 font-mono text-slate-400 font-bold">RM</span>
+                                    <input type="number" id="tender-input" value="0.00" step="1" min="0" oninput="recalc()" class="w-full pl-10 pr-3 py-2 rounded-xl bg-slate-800 border border-slate-700 font-mono font-bold text-white text-base focus:outline-none focus:border-indigo-500">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-slate-400 mb-1 block">Payment Channel</label>
+                                <select id="payment-channel" class="w-full py-2 px-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none">
+                                    <option value="Cash">Cash Tender (Register Drawer)</option>
+                                    <option value="Card">EDC Terminal (Maybank / CIMB Card)</option>
+                                    <option value="QR">DuitNow QR Pay</option>
+                                    <option value="Transfer">Online Bank Transfer</option>
+                                    <option value="Panel">Insurance Panel / GL</option>
+                                </select>
+                            </div>
+
+                            <div class="pt-2 flex justify-between items-center text-slate-300 font-mono">
+                                <span>Change Due:</span>
+                                <span class="font-bold text-indigo-400 text-sm" id="change-due">RM 0.00</span>
+                            </div>
+
+                            <!-- Preview Action CTAs -->
+                            <div class="pt-2 space-y-2">
+                                <button type="button" onclick="openA4Preview()" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition cursor-pointer">
+                                    <i class="bx bx-file-blank text-base"></i> Preview A4 Tax Invoice
+                                </button>
+                                <button type="button" onclick="openThermalPreview()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 transition cursor-pointer">
+                                    <i class="bx bx-printer text-base"></i> Preview 80mm Receipt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. Malaysian SST Act 2018 Statutory Section -->
+        <section id="sst-compliance" class="space-y-6 pt-6">
+            <div class="p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-800/40 shadow-xl space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+                            <i class="bx bx-check-shield"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Malaysian SST Act 2018 Healthcare Compliance</h3>
+                            <p class="text-xs text-slate-400">Service Tax Regulations 2018 (First Schedule, Healthcare Category)</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 w-fit">
+                        Official Statutory Standard
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-300">
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+                        <div class="font-bold text-emerald-400 text-sm flex items-center gap-1.5">
+                            <i class="bx bx-badge-check"></i> 0% SST (Tax Exempt)
+                        </div>
+                        <p class="text-slate-400 leading-relaxed">
+                            Medical consultations, doctor diagnostic procedures, surgical dressing, blood screening, and prescription pharmaceuticals are legally exempt.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+                        <div class="font-bold text-indigo-400 text-sm flex items-center gap-1.5">
+                            <i class="bx bx-calculator"></i> 6% / 8% Taxable Items
+                        </div>
+                        <p class="text-slate-400 leading-relaxed">
+                            Elective cosmetics, OTC supplements, health wellness retail items, or non-clinical wellness services can be configured with standard SST rates.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+                        <div class="font-bold text-purple-400 text-sm flex items-center gap-1.5">
+                            <i class="bx bx-file"></i> Tax Invoice Representation
+                        </div>
+                        <p class="text-slate-400 leading-relaxed">
+                            Both 80mm receipts and A4 invoices explicitly declare SST status, displaying <code>(Exempt)</code> tags for RM 0.00 items per Customs guidelines.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Complete Architecture Modules -->
+        <section id="modules" class="space-y-6 pt-6">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">System Blueprint</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Enterprise Architecture Modules</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs">
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl mb-3">
+                        <i class="bx bx-user-check"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-white">Module 1: Patient Directory</h3>
+                    <p class="text-slate-400 leading-relaxed">Search records by Malaysian IC, Passport, or mobile. Real-time allergy warnings and historical debt tracking.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl mb-3">
+                        <i class="bx bx-capsule"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-white">Module 2: Item &amp; Drug Master</h3>
+                    <p class="text-slate-400 leading-relaxed">Centralized pricing for Consultations, Procedures, Diagnostics, and Dispensary pharmaceuticals with stock deducts.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl mb-3">
+                        <i class="bx bx-wallet"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-white">Module 3: POS Invoicing Engine</h3>
+                    <p class="text-slate-400 leading-relaxed">Dynamic formula calculation: <code>Total = (Qty × Rate) - Disc + SST</code>. Full lifecycle from Draft to Settled or Void.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl mb-3">
+                        <i class="bx bx-credit-card-front"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-white">Module 4: Multi-Channel Tender</h3>
+                    <p class="text-slate-400 leading-relaxed">Fast front-desk cashier reconciliation supporting Cash, Credit/Debit EDC terminals, DuitNow QR, and Insurance Panel guarantees.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl mb-3">
+                        <i class="bx bx-coin-stack"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-white">Module 5: Cash Drawer Float</h3>
+                    <p class="text-slate-400 leading-relaxed">Daily cash drawer count balance vs. recorded collections with automated variance logging and shift closure tallies.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl mb-3">
+                        <i class="bx bx-shield-quarter"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-white">Module 6: Governance &amp; Audit Logs</h3>
+                    <p class="text-slate-400 leading-relaxed">100% immutable audit logging capturing actor, timestamp, IP address, and payload snapshots on every invoice void.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Developer Quickstart & Installation -->
+        <section id="quickstart" class="space-y-6 pt-6">
+            <div class="p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Deploy &amp; Run Locally</h3>
+                        <p class="text-xs text-slate-400">Get up and running in 3 minutes with PHP 8.2+ and Composer</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-lg bg-indigo-950 text-indigo-300 font-mono text-xs border border-indigo-800">git clone</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-950 text-emerald-300 font-mono text-xs border border-emerald-800">50-Record Seeders</span>
+                    </div>
+                </div>
+
+                <!-- Code Block -->
+                <div class="rounded-xl bg-slate-950 p-4 font-mono text-xs text-slate-300 overflow-x-auto border border-slate-800 custom-scrollbar">
+                    <pre><span class="text-slate-500"># 1. Clone repository</span>
+<span class="text-indigo-400">git clone</span> https://github.com/mralif93/clinic-invoice-system.git
+<span class="text-indigo-400">cd</span> clinic-invoice-system/cis
+
+<span class="text-slate-500"># 2. Install dependencies & configure environment</span>
+<span class="text-indigo-400">composer</span> install
+<span class="text-indigo-400">npm</span> install
+<span class="text-indigo-400">cp</span> .env.example .env
+<span class="text-indigo-400">php</span> artisan key:generate
+
+<span class="text-slate-500"># 3. Migrate and seed 50 sample clinical records</span>
+<span class="text-indigo-400">php</span> artisan migrate:fresh --seed
+
+<span class="text-slate-500"># 4. Build assets and launch POS server</span>
+<span class="text-indigo-400">npm</span> run build
+<span class="text-indigo-400">php</span> artisan serve --port=8001</pre>
+                </div>
+
+                <!-- Credentials Table -->
+                <div class="overflow-x-auto text-xs">
+                    <table class="w-full text-left">
+                        <thead class="text-slate-400 border-b border-slate-800 uppercase font-bold text-[10px]">
+                            <tr>
+                                <th class="py-2 px-3">Role</th>
+                                <th class="py-2 px-3">Login Email</th>
+                                <th class="py-2 px-3">Password</th>
+                                <th class="py-2 px-3">Staff ID</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800 font-mono text-slate-300">
+                            <tr>
+                                <td class="py-2.5 px-3 font-bold text-white">Administrator</td>
+                                <td class="py-2.5 px-3 text-indigo-400">admin@clinic.my</td>
+                                <td class="py-2.5 px-3">password</td>
+                                <td class="py-2.5 px-3">ADM-001</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 font-bold text-white">Cashier / Staff</td>
+                                <td class="py-2.5 px-3 text-indigo-400">cashier@clinic.my</td>
+                                <td class="py-2.5 px-3">password</td>
+                                <td class="py-2.5 px-3">STF-001</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-900/60 py-10 text-xs text-slate-500 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <i class="bx bx-pulse text-indigo-500 text-lg"></i>
+                <span class="font-bold text-slate-300">ClinicFlow Invoice System</span> &bull; Malaysian Practice POS Billing
+            </div>
+            <div>
+                Crafted with Laravel 12 &amp; Tailwind CSS &bull; <a href="https://github.com/mralif93/clinic-invoice-system" target="_blank" class="text-indigo-400 hover:underline">GitHub Repository</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal 1: A4 Official Tax Invoice Preview -->
+    <div id="modal-a4" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden animate__animated animate__fadeInUp">
+            <div class="p-4 bg-slate-100 border-b border-slate-200 flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                    <i class="bx bx-file text-base text-indigo-600"></i> Formal A4 Tax Invoice Preview
+                </span>
+                <button type="button" onclick="closeModal('modal-a4')" class="text-slate-400 hover:text-slate-600 text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            
+            <div id="printable-a4" class="p-8 space-y-6 text-xs">
+                <!-- Header -->
+                <div class="flex justify-between items-start border-b pb-4">
+                    <div>
+                        <div class="text-2xl font-black text-indigo-950 tracking-tight">KLINIK MEDIKAL HARMONI</div>
+                        <div class="text-slate-500 mt-1">SSM: 202601004928 (1584920-K) &bull; MOH License: 2026/0942/A</div>
+                        <div class="text-slate-500">No. 18, Jalan Solaris 4, Solaris Dutamas, 50480 Kuala Lumpur</div>
+                        <div class="text-slate-500">Phone: +603-6207 9888 &bull; Email: billing@medikalharmoni.my</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-3 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">OFFICIAL TAX INVOICE</span>
+                        <div class="text-base font-black text-slate-900 font-mono mt-2">INV-20260903-0001</div>
+                        <div class="text-slate-500 text-[11px]">Date: 03 Sep 2026</div>
+                    </div>
+                </div>
+
+                <!-- Patient & Attendant Details -->
+                <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <div class="text-[10px] font-bold uppercase text-slate-400">Billed To (Patient)</div>
+                        <div class="font-bold text-slate-900 text-sm">Ahmad Rahman</div>
+                        <div class="text-slate-600 font-mono">IC: 990719-08-6505</div>
+                        <div class="text-slate-600">Phone: +6015-748 9554</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] font-bold uppercase text-slate-400">Clinical Attendant</div>
+                        <div class="font-bold text-slate-900">Dr. Aiman Hakim (ADM-001)</div>
+                        <div class="text-slate-600">Allergies: <span class="text-rose-600 font-bold">Penicillin</span></div>
+                    </div>
+                </div>
+
+                <!-- Invoice Line Items Table -->
+                <table class="w-full text-left border rounded-xl overflow-hidden">
+                    <thead class="bg-slate-100 uppercase text-[10px] font-bold text-slate-600">
+                        <tr>
+                            <th class="py-2.5 px-3">Item Description</th>
+                            <th class="py-2.5 px-3 text-center">Qty</th>
+                            <th class="py-2.5 px-3 text-right">Unit Rate (RM)</th>
+                            <th class="py-2.5 px-3 text-right">Total (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-a4-items" class="divide-y text-slate-700">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+
+                <!-- Summary Breakdown -->
+                <div class="flex justify-between items-start pt-2">
+                    <div class="max-w-xs text-[11px] text-slate-500 space-y-1">
+                        <div class="font-bold text-slate-700">Terms &amp; Instructions:</div>
+                        <p>Prescription drugs and clinical consultations are exempt from SST under the Malaysian Service Tax Regulations 2018.</p>
+                    </div>
+                    <div class="w-64 space-y-1.5 font-mono text-xs">
+                        <div class="flex justify-between"><span>Subtotal:</span> <span id="modal-a4-subtotal">RM 0.00</span></div>
+                        <div class="flex justify-between text-slate-500"><span>Service Tax (SST):</span> <span id="modal-a4-sst">RM 0.00 (Exempt)</span></div>
+                        <div class="flex justify-between font-black text-sm text-slate-900 pt-1.5 border-t"><span>Total Payable:</span> <span id="modal-a4-grand">RM 0.00</span></div>
+                        <div class="flex justify-between text-emerald-700 font-bold"><span>Amount Paid:</span> <span id="modal-a4-paid">RM 0.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-100 border-t border-slate-200 flex justify-between items-center">
+                <button type="button" onclick="closeModal('modal-a4')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer">Close</button>
+                <button type="button" onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition cursor-pointer">
+                    <i class="bx bx-printer text-base"></i> Print A4 Invoice
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: 80mm ESC/POS Thermal Receipt Preview -->
+    <div id="modal-thermal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate__animated animate__fadeInUp">
+            <div class="p-3 bg-slate-100 border-b flex items-center justify-between text-xs font-bold text-slate-600">
+                <span>80mm Thermal POS Slip</span>
+                <button type="button" onclick="closeModal('modal-thermal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            
+            <div class="p-5 font-mono text-xs text-slate-800 space-y-3">
+                <div class="text-center border-b pb-2">
+                    <div class="font-black text-sm">KLINIK MEDIKAL HARMONI</div>
+                    <div class="text-[10px] text-slate-500">SSM: 202601004928</div>
+                    <div class="text-[10px] text-slate-500">Tel: +603-6207 9888</div>
+                </div>
+
+                <div class="text-[11px] space-y-0.5 border-b pb-2">
+                    <div class="flex justify-between"><span>Receipt:</span> <span class="font-bold">INV-20260903-0001</span></div>
+                    <div class="flex justify-between"><span>Date:</span> <span>03 Sep 2026</span></div>
+                    <div class="flex justify-between"><span>Patient:</span> <span>Ahmad Rahman</span></div>
+                    <div class="flex justify-between"><span>Doctor:</span> <span>Dr. Aiman Hakim</span></div>
+                </div>
+
+                <div id="modal-thermal-items" class="space-y-1 text-[11px] border-b pb-2">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div class="space-y-1 text-[11px] border-b pb-2">
+                    <div class="flex justify-between font-black text-xs"><span>TOTAL:</span> <span id="modal-thermal-total">RM 0.00</span></div>
+                    <div class="flex justify-between"><span>SST:</span> <span id="modal-thermal-tax">RM 0.00 (Exempt)</span></div>
+                    <div class="flex justify-between text-emerald-700 font-bold"><span>PAID:</span> <span id="modal-thermal-paid">RM 0.00</span></div>
+                </div>
+
+                <div class="text-center text-[10px] text-slate-500 pt-1">
+                    Thank you. Get well soon!
+                </div>
+            </div>
+
+            <div class="p-3 bg-slate-100 border-t flex justify-between items-center">
+                <button type="button" onclick="closeModal('modal-thermal')" class="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-900 cursor-pointer">Close</button>
+                <button type="button" onclick="window.print()" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md transition cursor-pointer">Print Thermal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simulator Logic Engine -->
+    <script>
+        const catalogItems = [
+            { id: 1, name: 'Standard General Consultation', code: 'CON-001', category: 'consultation', price: 45.00, icon: 'bx-pulse' },
+            { id: 2, name: 'Extended Specialist Consultation', code: 'CON-002', category: 'consultation', price: 95.00, icon: 'bx-pulse' },
+            { id: 3, name: 'Pediatric Health Assessment', code: 'CON-003', category: 'consultation', price: 65.00, icon: 'bx-pulse' },
+            { id: 4, name: 'Paracetamol 500mg (10s)', code: 'MED-001', category: 'medication', price: 8.50, icon: 'bx-capsule' },
+            { id: 5, name: 'Amoxicillin 250mg Suspension', code: 'MED-002', category: 'medication', price: 22.00, icon: 'bx-capsule' },
+            { id: 6, name: 'Cetirizine 10mg Tablets (10s)', code: 'MED-003', category: 'medication', price: 12.00, icon: 'bx-capsule' },
+            { id: 7, name: 'Salbutamol Inhaler 100mcg', code: 'MED-004', category: 'medication', price: 28.50, icon: 'bx-capsule' },
+            { id: 8, name: 'Wound Debridement & Dressing', code: 'PRC-001', category: 'procedure', price: 60.00, icon: 'bx-plus-medical' },
+            { id: 9, name: 'Nebulizer Therapy Session', code: 'PRC-002', category: 'procedure', price: 35.00, icon: 'bx-plus-medical' },
+            { id: 10, name: '12-Lead Resting ECG', code: 'PRC-003', category: 'procedure', price: 75.00, icon: 'bx-plus-medical' },
+            { id: 11, name: 'Full Blood Count (FBC) Profile', code: 'LAB-001', category: 'lab', price: 55.00, icon: 'bx-test-tube' },
+            { id: 12, name: 'Dengue NS1 Antigen Rapid Test', code: 'LAB-002', category: 'lab', price: 60.00, icon: 'bx-test-tube' },
+        ];
+
+        let activeBilledItems = [
+            { id: 1, name: 'Standard General Consultation', code: 'CON-001', qty: 1, price: 45.00, disc: 0.00 },
+            { id: 4, name: 'Paracetamol 500mg (10s)', code: 'MED-001', qty: 2, price: 8.50, disc: 0.00 },
+            { id: 9, name: 'Nebulizer Therapy Session', code: 'PRC-002', qty: 1, price: 35.00, disc: 5.00 }
+        ];
+
+        let currentCategory = 'all';
+
+        function renderCatalog() {
+            const tbody = document.getElementById('catalog-tbody');
+            const search = (document.getElementById('catalog-search')?.value || '').toLowerCase().trim();
+            tbody.innerHTML = '';
+
+            catalogItems.forEach(item => {
+                const matchCat = (currentCategory === 'all') || (item.category === currentCategory);
+                const matchSearch = !search || item.name.toLowerCase().includes(search) || item.code.toLowerCase().includes(search);
+
+                if (matchCat && matchSearch) {
+                    const isChecked = activeBilledItems.some(bi => bi.id === item.id);
+                    const tr = document.createElement('tr');
+                    tr.className = `hover:bg-indigo-950/20 transition-colors cursor-pointer ${isChecked ? 'bg-indigo-950/40' : ''}`;
+                    tr.onclick = (e) => {
+                        if (['INPUT', 'BUTTON'].includes(e.target.tagName)) return;
+                        toggleItem(item.id);
+                    };
+
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3 text-center align-middle">
+                            <input type="checkbox" ${isChecked ? 'checked' : ''} class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600 m-0" onclick="event.stopPropagation(); toggleItem(${item.id})">
+                        </td>
+                        <td class="py-2.5 px-3 align-middle">
+                            <div class="flex items-start gap-2.5">
+                                <div class="w-6 h-6 rounded-lg bg-indigo-950/60 text-indigo-400 flex items-center justify-center shrink-0 mt-0.5 border border-indigo-900/50">
+                                    <i class="bx ${item.icon} text-sm"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="font-semibold text-white text-xs leading-tight">${item.name}</div>
+                                    <div class="text-[10px] font-mono text-slate-400 mt-0.5 leading-none">${item.code}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 hidden sm:table-cell align-middle">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold border bg-indigo-950/50 text-indigo-300 border-indigo-900 capitalize">${item.category}</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-right font-mono font-bold text-white align-middle">
+                            RM ${item.price.toFixed(2)}
+                        </td>
+                        <td class="py-2.5 px-3 text-center align-middle">
+                            <button type="button" onclick="event.stopPropagation(); toggleItem(${item.id})" class="p-1 rounded-lg text-indigo-400 hover:bg-indigo-950 transition cursor-pointer">
+                                <i class="bx ${isChecked ? 'bx-check-circle text-emerald-400' : 'bx-plus-circle'} text-lg"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+        }
+
+        function renderBilled() {
+            const tbody = document.getElementById('billed-tbody');
+            tbody.innerHTML = '';
+
+            activeBilledItems.forEach((item, index) => {
+                const total = Math.max(0, (item.qty * item.price) - item.disc);
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-800/40 transition';
+                tr.innerHTML = `
+                    <td class="py-2.5 px-4 font-bold text-white">
+                        <div>${item.name}</div>
+                        <div class="text-[10px] font-mono text-slate-400">${item.code}</div>
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <input type="number" min="1" value="${item.qty}" onchange="updateQty(${index}, this.value)" class="w-16 py-1 px-2 rounded-lg bg-slate-800 border border-slate-700 text-center font-mono text-white text-xs">
+                    </td>
+                    <td class="py-2.5 px-3 text-right font-mono text-slate-300">RM ${item.price.toFixed(2)}</td>
+                    <td class="py-2.5 px-3 text-right font-mono text-slate-300">
+                        <input type="number" min="0" step="1" value="${item.disc.toFixed(2)}" onchange="updateDisc(${index}, this.value)" class="w-16 py-1 px-2 rounded-lg bg-slate-800 border border-slate-700 text-right font-mono text-white text-xs">
+                    </td>
+                    <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">RM ${total.toFixed(2)}</td>
+                    <td class="py-2.5 px-3 text-center">
+                        <button type="button" onclick="removeItem(${index})" class="text-slate-400 hover:text-rose-400 cursor-pointer"><i class="bx bx-trash text-base"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            recalc();
+        }
+
+        function toggleItem(id) {
+            const exists = activeBilledItems.findIndex(i => i.id === id);
+            if (exists >= 0) {
+                activeBilledItems.splice(exists, 1);
+            } else {
+                const item = catalogItems.find(i => i.id === id);
+                if (item) {
+                    activeBilledItems.push({ id: item.id, name: item.name, code: item.code, qty: 1, price: item.price, disc: 0.00 });
+                }
+            }
+            renderCatalog();
+            renderBilled();
+        }
+
+        function updateQty(index, qty) {
+            activeBilledItems[index].qty = Math.max(1, parseInt(qty) || 1);
+            renderBilled();
+        }
+
+        function updateDisc(index, disc) {
+            activeBilledItems[index].disc = Math.max(0, parseFloat(disc) || 0);
+            renderBilled();
+        }
+
+        function removeItem(index) {
+            activeBilledItems.splice(index, 1);
+            renderCatalog();
+            renderBilled();
+        }
+
+        function filterCat(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-pill').forEach(btn => {
+                btn.className = 'cat-pill px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer';
+            });
+            const activeBtn = document.getElementById(`btn-cat-${cat}`);
+            if (activeBtn) {
+                activeBtn.className = 'cat-pill px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer';
+            }
+            renderCatalog();
+        }
+
+        function searchItems() {
+            renderCatalog();
+        }
+
+        function recalc() {
+            let gross = 0;
+            activeBilledItems.forEach(i => {
+                gross += Math.max(0, (i.qty * i.price) - i.disc);
+            });
+
+            const discount = parseFloat(document.getElementById('summary-discount')?.value || 0);
+            const taxable = Math.max(0, gross - discount);
+            const sstRate = parseFloat(document.getElementById('summary-sst-rate')?.value || 0);
+            const tax = taxable * (sstRate / 100);
+            const grand = taxable + tax;
+
+            document.getElementById('summary-gross').innerText = `RM ${gross.toFixed(2)}`;
+            document.getElementById('summary-tax').innerText = `RM ${tax.toFixed(2)}`;
+            document.getElementById('summary-grand').innerText = `RM ${grand.toFixed(2)}`;
+
+            const tenderInput = document.getElementById('tender-input');
+            const tenderVal = parseFloat(tenderInput?.value || 0);
+            const change = Math.max(0, tenderVal - grand);
+            document.getElementById('change-due').innerText = `RM ${change.toFixed(2)}`;
+        }
+
+        function setExact() {
+            let gross = 0;
+            activeBilledItems.forEach(i => gross += Math.max(0, (i.qty * i.price) - i.disc));
+            const discount = parseFloat(document.getElementById('summary-discount')?.value || 0);
+            const taxable = Math.max(0, gross - discount);
+            const sstRate = parseFloat(document.getElementById('summary-sst-rate')?.value || 0);
+            const tax = taxable * (sstRate / 100);
+            const grand = taxable + tax;
+
+            const tenderInput = document.getElementById('tender-input');
+            if (tenderInput) {
+                tenderInput.value = grand.toFixed(2);
+                recalc();
+            }
+        }
+
+        function openA4Preview() {
+            const container = document.getElementById('modal-a4-items');
+            container.innerHTML = '';
+            let gross = 0;
+            activeBilledItems.forEach(item => {
+                const total = Math.max(0, (item.qty * item.price) - item.disc);
+                gross += total;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3"><strong>${item.name}</strong> <span class="text-[10px] text-slate-400 font-mono">(${item.code})</span></td>
+                    <td class="py-2.5 px-3 text-center font-mono">${item.qty}</td>
+                    <td class="py-2.5 px-3 text-right font-mono">RM ${item.price.toFixed(2)}</td>
+                    <td class="py-2.5 px-3 text-right font-mono font-bold">RM ${total.toFixed(2)}</td>
+                `;
+                container.appendChild(tr);
+            });
+
+            const discount = parseFloat(document.getElementById('summary-discount')?.value || 0);
+            const taxable = Math.max(0, gross - discount);
+            const sstRate = parseFloat(document.getElementById('summary-sst-rate')?.value || 0);
+            const tax = taxable * (sstRate / 100);
+            const grand = taxable + tax;
+
+            document.getElementById('modal-a4-subtotal').innerText = `RM ${gross.toFixed(2)}`;
+            document.getElementById('modal-a4-sst').innerText = `RM ${tax.toFixed(2)} (${sstRate == 0 ? 'Exempt' : sstRate + '% SST'})`;
+            document.getElementById('modal-a4-grand').innerText = `RM ${grand.toFixed(2)}`;
+            document.getElementById('modal-a4-paid').innerText = `RM ${grand.toFixed(2)}`;
+
+            document.getElementById('modal-a4').classList.remove('hidden');
+        }
+
+        function openThermalPreview() {
+            const container = document.getElementById('modal-thermal-items');
+            container.innerHTML = '';
+            let gross = 0;
+            activeBilledItems.forEach(item => {
+                const total = Math.max(0, (item.qty * item.price) - item.disc);
+                gross += total;
+                const div = document.createElement('div');
+                div.className = 'flex justify-between';
+                div.innerHTML = `<span>${item.qty}x ${item.name.substring(0, 20)}</span> <span>RM ${total.toFixed(2)}</span>`;
+                container.appendChild(div);
+            });
+
+            const discount = parseFloat(document.getElementById('summary-discount')?.value || 0);
+            const taxable = Math.max(0, gross - discount);
+            const sstRate = parseFloat(document.getElementById('summary-sst-rate')?.value || 0);
+            const tax = taxable * (sstRate / 100);
+            const grand = taxable + tax;
+
+            document.getElementById('modal-thermal-total').innerText = `RM ${grand.toFixed(2)}`;
+            document.getElementById('modal-thermal-tax').innerText = `RM ${tax.toFixed(2)} (${sstRate == 0 ? 'Exempt' : sstRate + '%'})`;
+            document.getElementById('modal-thermal-paid').innerText = `RM ${grand.toFixed(2)}`;
+
+            document.getElementById('modal-thermal').classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id)?.classList.add('hidden');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCatalog();
+            renderBilled();
+            setExact();
+        });
+    </script>
+</body>
+</html>
