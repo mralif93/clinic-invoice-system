@@ -2,6 +2,9 @@
 
 A modern, resilient, and compliant **Clinic Invoice & Front-Desk POS Billing System** tailored for Malaysian and regional general practitioner (GP) clinics, dental surgeries, and specialist ambulatory practices. Built with **Laravel 12**, **Tailwind CSS**, and modern reactive Blade components.
 
+> 🌐 **Live Interactive Preview (GitHub Pages):**  
+> **[https://mralif93.github.io/clinic-invoice-system/](https://mralif93.github.io/clinic-invoice-system/)**
+
 ---
 
 ## 🌟 Key Highlights & Core Capabilities
