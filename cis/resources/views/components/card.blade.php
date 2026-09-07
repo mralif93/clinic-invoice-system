@@ -9,7 +9,7 @@
 
 @php
     $variants = [
-        'default' => 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 shadow-xs dark:shadow-md',
+        'default' => 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-xs dark:shadow-md',
         'frosted' => 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-slate-200/80 dark:border-slate-800/80 shadow-md',
         'flat' => 'bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800',
         'highlight' => 'bg-gradient-to-br from-indigo-50/50 to-white dark:from-indigo-950/20 dark:to-slate-900 border-indigo-200/60 dark:border-indigo-800/40 shadow-md',

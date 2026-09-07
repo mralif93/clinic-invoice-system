@@ -15,13 +15,25 @@
     <span
         class="absolute left-1 top-1 h-6 w-6 rounded-full bg-white dark:bg-slate-900 shadow-md transform transition-transform duration-300 ease-in-out flex items-center justify-center border border-slate-200 dark:border-slate-700 translate-x-0 dark:translate-x-6 pointer-events-none"
     >
-        <!-- Light Mode Icon (Only visible in Light Mode) -->
+        <!-- Light Mode Icon -->
         <span class="block dark:hidden text-amber-500 text-xs flex items-center justify-center">
             <i class="bx bx-sun"></i>
         </span>
-        <!-- Dark Mode Icon (Only visible in Dark Mode) -->
+        <!-- Dark Mode Icon -->
         <span class="hidden dark:block text-indigo-400 text-xs flex items-center justify-center">
             <i class="bx bx-moon"></i>
         </span>
     </span>
 </button>
+
+<script>
+    function toggleTheme() {
+        if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+</script>

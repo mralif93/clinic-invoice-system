@@ -18,6 +18,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'centraflow_uuid',
         'staff_id',
         'name',
         'email',

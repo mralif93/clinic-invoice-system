@@ -39,7 +39,7 @@
     $colors = $colorMap[$color] ?? $colorMap['indigo'];
 @endphp
 
-<div {{ $attributes->merge(['class' => 'p-5 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs dark:shadow-md transition-colors']) }}>
+<div {{ $attributes->merge(['class' => 'p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs dark:shadow-md transition-colors']) }}>
     <div class="flex items-center justify-between">
         <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ $title }}</span>
         @if($icon)

@@ -17,7 +17,7 @@
 
 <div class="space-y-1.5 w-full">
     @if($label)
-        <label for="{{ $inputId }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+        <label for="{{ $inputId }}" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
             {{ $label }}
             @if($required)
                 <span class="text-rose-500">*</span>
@@ -40,10 +40,10 @@
             placeholder="{{ $placeholder }}"
             @if($required) required @endif
             {{ $attributes->merge([
-                'class' => 'w-full py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border ' .
-                    ($error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 dark:border-slate-700 focus:border-indigo-500 focus:ring-indigo-500') .
-                    ' text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:ring-1 focus:outline-none transition-colors ' .
-                    ($icon ? 'pl-10 pr-4' : 'px-4')
+                'class' => 'w-full py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border ' .
+                    ($error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20') .
+                    ' text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-xs focus:ring-2 focus:outline-none transition-colors ' .
+                    ($icon ? 'pl-10 pr-4' : 'px-3.5')
             ]) }}
         >
     </div>

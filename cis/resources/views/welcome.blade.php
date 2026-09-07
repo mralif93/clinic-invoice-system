@@ -253,6 +253,80 @@
                 </div>
             </div>
         </div>
+
+        <!-- Settlement & POS Drawer Section -->
+        <div id="settlement" class="mt-16 p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider">
+                        <i class="bx bx-transfer-alt"></i>
+                        <span>Cashier &amp; POS Operations</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">Multi-Channel Settlement &amp; Bank Reconciliation</h3>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-400/30 inline-flex items-center gap-1.5 self-start sm:self-auto">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Terminal Synced
+                </span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+                    <div class="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+                        <i class="bx bx-money text-base text-emerald-600 dark:text-emerald-400"></i>
+                        <span>Cash Float &amp; Drawer</span>
+                    </div>
+                    <p class="text-slate-500 dark:text-slate-400">Track opening float balances, physical till counts, and daily variance reports with automatic audit triggers.</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+                    <div class="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+                        <i class="bx bx-credit-card-front text-base text-indigo-600 dark:text-indigo-400"></i>
+                        <span>EDC Card Batch Settlement</span>
+                    </div>
+                    <p class="text-slate-500 dark:text-slate-400">Capture card batch receipts, bank approval codes, and reconcile terminal settlement records against merchant accounts.</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+                    <div class="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+                        <i class="bx bx-qr text-base text-purple-600 dark:text-purple-400"></i>
+                        <span>DuitNow QR &amp; Panel Guarantees</span>
+                    </div>
+                    <p class="text-slate-500 dark:text-slate-400">Instant DuitNow QR reference verification and corporate panel guarantee letter (GL) co-payment tracking.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Governance & Security Section -->
+        <div id="governance" class="mt-12 p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-800/40 shadow-2xl text-white space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-indigo-800/50 pb-5">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+                        <i class="bx bx-shield-quarter"></i>
+                        <span>Clinical Security &amp; Compliance</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white">Central Identity &amp; Immutable Audit Trail</h3>
+                </div>
+                <div class="text-xs text-indigo-300 font-mono">
+                    CentraFlow SSO (:8004) &bull; Enterprise RBAC
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+                    <div class="font-bold text-white mb-1">CentraFlow SSO</div>
+                    <p class="text-slate-300">Centralized OAuth 2.0 single sign-on across HRMS, Payroll, and Invoicing portals.</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+                    <div class="font-bold text-white mb-1">Strict Role Isolation</div>
+                    <p class="text-slate-300">Doctors, cashiers, and administrators operate with compartmentalized access privileges.</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+                    <div class="font-bold text-white mb-1">Void Governance</div>
+                    <p class="text-slate-300">Mandatory supervisor reason code recording for every invoice cancellation or item removal.</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+                    <div class="font-bold text-white mb-1">Immutable Log Vault</div>
+                    <p class="text-slate-300">Tamper-evident logs recording IP addresses, session IDs, and timestamped payloads.</p>
+                </div>
+            </div>
+        </div>
     </section>
 
 </x-layouts.public>

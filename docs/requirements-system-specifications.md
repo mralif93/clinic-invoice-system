@@ -10,21 +10,23 @@ The **Clinic Invoice System (CIS)** is a web-based billing and invoicing platfor
 
 ### Technology Stack
 
-* **Backend Framework:** Laravel (PHP 8.2+)
+* **Backend Framework:** Laravel 12 (PHP 8.2+)
 * **Database:** SQLite / MySQL / PostgreSQL
-* **Frontend & Styling:** Blade Templates / Livewire / Tailwind CSS
+* **Frontend & Styling:** Blade Components / Vanilla JavaScript / Tailwind CSS (Light & Dark Theme)
+* **Identity & Authentication:** CentraFlow Identity Hub (`:8004`) OAuth 2.0 Client (Laravel Passport) with Single Sign-On (SSO) & Central Single Logout (SLO)
 * **Animations:** Animate.css (modals, alerts, invoice transitions)
-* **Icons:** Lucide Icons (`lucide-blade` or SVGs)
-* **PDF Engine:** Laravel DomPDF / Browsershot
+* **Icons & Typography:** Boxicons (`bx`), Plus Jakarta Sans, JetBrains Mono
+* **PDF & Print Engine:** Interactive modal preview with 80mm ESC/POS thermal receipt & A4 formal tax invoice output
 
 ---
 
 ## 2. System Requirements Specification (SRS)
 
-### 2.1 User Roles & Permissions
+### 2.1 User Roles, Permissions & SSO Authentication
 
-* **Admin / Doctor:** Full system access (manage inventory/treatments, view financial reports, void invoices).
-* **Receptionist / Cashier:** Front-desk billing access (create/edit invoices, register patients, record payments, print receipts).
+* **Authentication Architecture:** Single Sign-On (SSO) centrally authenticated via CentraFlow (`:8004`) using Authorization Code Grant with scopes (`invoice:manage`, `invoice:read`).
+* **Admin / Doctor (`ADM-001`):** Full system access (manage treatment/medication catalog, executive multi-period revenue tracking, EDC bank reconciliation, tamper-proof activity audit log inspection, invoice void authorizations).
+* **Receptionist / Cashier (`STF-001`):** Front-desk POS billing access (multi-select catalog, patient registration with allergy alerts, tender settlement, thermal receipt/A4 printing, end-of-shift cash drawer balancing).
 
 ### 2.2 Functional Requirements (FR)
 

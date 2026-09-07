@@ -4,7 +4,7 @@
     'perPageParam' => 'per_page',
 ])
 
-@if ($paginator->total() > 0)
+@if ($paginator && $paginator->total() > 0)
     <div {{ $attributes->merge(['class' => 'px-4 py-3.5 sm:px-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs']) }}>
         
         <!-- Left: Per-Page Limit Selector & Results Counter -->
@@ -27,7 +27,7 @@
                     <select
                         name="{{ $perPageParam }}"
                         onchange="this.form.submit()"
-                        class="py-1.5 pl-2.5 pr-7 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold focus:border-indigo-500 focus:outline-none appearance-none transition-all cursor-pointer"
+                        class="py-1.5 pl-2.5 pr-7 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold focus:border-indigo-500 focus:outline-none appearance-none transition-all cursor-pointer"
                     >
                         @foreach ($perPageOptions as $option)
                             <option value="{{ $option }}" {{ (int) request($perPageParam, $paginator->perPage()) === (int) $option ? 'selected' : '' }}>
