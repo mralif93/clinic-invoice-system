@@ -1,81 +1,131 @@
-<x-layouts.public title="Sign In - ClinicFlow Invoicing System">
+<x-layouts.auth title="Staff & Admin Login">
 
-<div class="min-h-[calc(100vh-14rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
-    <div class="w-full max-w-md animate__animated animate__fadeInUp animate__faster">
-        
-        <!-- Card Container -->
-        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl shadow-indigo-500/10 p-8 sm:p-10 transition-colors">
+    <div class="space-y-6">
+
+        <!-- Login Card -->
+        <x-card class="p-2 sm:p-4">
             
-            <!-- Header & Brand -->
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-blue-800 text-white shadow-lg shadow-indigo-600/30 border border-indigo-400/30 mb-4">
-                    <i class="bx bx-receipt text-3xl"></i>
+            <!-- Card Header -->
+            <div class="space-y-2 text-center mb-6 pt-2">
+                <div class="inline-flex p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 shadow-inner mb-1">
+                    <i class="bx bx-shield-quarter text-3xl"></i>
                 </div>
-                <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Staff Portal Sign In</h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 font-medium">Access clinic billing, patient invoicing, and cashier terminal</p>
+                <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Staff Authentication</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Enter your official clinic credentials to access billing</p>
             </div>
 
-            <!-- Session Status / Flash Alert -->
-            @if(session('status') || request()->has('logged_out'))
-                <div id="logout-alert" class="mb-6 p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-400 dark:border-emerald-600/60 text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between gap-3 animate__animated animate__fadeIn">
-                    <div class="flex items-center gap-3">
-                        <i class="bx bx-check-circle text-xl text-emerald-600 dark:text-emerald-400 shrink-0"></i>
-                        <span class="font-medium text-[13px] text-emerald-800 dark:text-emerald-200">
-                            {{ session('status') ?? (request()->has('logged_out') ? 'You have been logged out securely.' : 'You have been logged out securely.') }}
-                        </span>
-                    </div>
-                    <button type="button" onclick="document.getElementById('logout-alert').remove()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1 cursor-pointer" aria-label="Dismiss">
-                        <i class="bx bx-x text-base"></i>
-                    </button>
-                </div>
+            <!-- Flash Alerts -->
+            @if (session('success'))
+                <x-alert type="success" class="mb-4">
+                    {{ session('success') }}
+                </x-alert>
             @endif
 
-            <!-- CentraFlow SSO Primary Action -->
-            <div class="space-y-4">
-                <div class="p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 text-center">
-                    <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600/10 dark:bg-indigo-400/10 text-indigo-600 dark:text-indigo-400 mb-2">
-                        <i class="bx bx-shield-quarter text-2xl"></i>
+            @if (session('status'))
+                <x-alert type="info" class="mb-4">
+                    {{ session('status') }}
+                </x-alert>
+            @endif
+
+            @if ($errors->any())
+                <x-alert type="danger" class="mb-4">
+                    <ul class="list-disc list-inside space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </x-alert>
+            @endif
+
+            <!-- Form -->
+            <form action="{{ route('login') }}" method="POST" class="space-y-4">
+                @csrf
+
+                <!-- Email or Staff ID Input Component -->
+                <x-input
+                    label="Email Address or Staff ID"
+                    name="email"
+                    id="email"
+                    value="admin@clinic.my"
+                    icon="bx bx-user"
+                    placeholder="admin@clinic.my or ADM-001"
+                    required
+                />
+
+                <!-- Password Input Component -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            Password
+                        </label>
+                        <a href="{{ route('password.request') }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition">
+                            Forgot password?
+                        </a>
                     </div>
-                    <p class="text-xs font-semibold text-indigo-950 dark:text-indigo-200">
-                        Enterprise Identity Protection Enforced
-                    </p>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                        Authentication for ClinicFlow is centrally managed by CentraFlow Identity Hub. Click below to sign in with your corporate credentials.
-                    </p>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                            <i class="bx bx-lock-alt text-lg"></i>
+                        </div>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            required
+                            placeholder="••••••••"
+                            value="password"
+                            class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition"
+                        >
+                    </div>
                 </div>
 
-                @if($errors->has('oauth'))
-                    <div class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
-                        <i class="bx bx-error-circle text-lg shrink-0"></i>
-                        <span>{{ $errors->first('oauth') }}</span>
-                    </div>
-                @endif
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between pt-1">
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-white dark:focus:ring-offset-slate-900">
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Remember this station</span>
+                    </label>
+                </div>
 
-                @if($errors->any() && !$errors->has('oauth'))
-                    <div class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
-                        <i class="bx bx-error-circle text-lg shrink-0"></i>
-                        <span>{{ $errors->first() }}</span>
-                    </div>
-                @endif
+                <!-- Submit Button Component -->
+                <x-button type="submit" variant="primary" size="md" icon="bx bx-log-in-circle" class="w-full mt-2">
+                    Authenticate Station
+                </x-button>
+            </form>
 
-                <a href="{{ route('sso.login') }}" 
-                   class="w-full inline-flex items-center justify-center gap-3 py-4 px-5 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-700 hover:from-indigo-500 hover:to-blue-600 shadow-xl shadow-indigo-600/30 border border-indigo-400/30 active:scale-[0.99] transition-all cursor-pointer">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
-                    </svg>
-                    <span>Sign in with CentraFlow SSO</span>
-                </a>
-
-                <div class="pt-2 text-center">
-                    <span class="text-[11px] text-slate-400 flex items-center justify-center gap-1.5 font-mono">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        CentraFlow OAuth 2.0 Server Active (:8004)
-                    </span>
+            <!-- Pre-configured Test Accounts Quick Fill -->
+            <div class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                    <i class="bx bx-key text-indigo-600 dark:text-indigo-400"></i>
+                    <span>Default Clinic Credentials (Seeded)</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button
+                        type="button"
+                        onclick="document.getElementById('email').value='admin@clinic.my'; document.getElementById('password').value='password';"
+                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-left hover:border-indigo-500 transition"
+                    >
+                        <div class="font-bold text-slate-900 dark:text-white flex items-center justify-between">
+                            <span>Admin / Doctor</span>
+                            <i class="bx bx-check text-xs text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">admin@clinic.my</div>
+                    </button>
+                    <button
+                        type="button"
+                        onclick="document.getElementById('email').value='cashier@clinic.my'; document.getElementById('password').value='password';"
+                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-left hover:border-indigo-500 transition"
+                    >
+                        <div class="font-bold text-slate-900 dark:text-white flex items-center justify-between">
+                            <span>Cashier / Staff</span>
+                            <i class="bx bx-check text-xs text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">cashier@clinic.my</div>
+                    </button>
                 </div>
             </div>
-        </div>
+
+        </x-card>
 
     </div>
-</div>
 
-</x-layouts.public>
+</x-layouts.auth>

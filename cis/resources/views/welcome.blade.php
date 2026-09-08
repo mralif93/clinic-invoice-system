@@ -305,13 +305,13 @@
                     <h3 class="text-xl font-bold text-white">Central Identity &amp; Immutable Audit Trail</h3>
                 </div>
                 <div class="text-xs text-indigo-300 font-mono">
-                    CentraFlow SSO (:8004) &bull; Enterprise RBAC
+                    Staff Authentication &bull; Enterprise RBAC
                 </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                 <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
-                    <div class="font-bold text-white mb-1">CentraFlow SSO</div>
-                    <p class="text-slate-300">Centralized OAuth 2.0 single sign-on across HRMS, Payroll, and Invoicing portals.</p>
+                    <div class="font-bold text-white mb-1">Staff Authentication</div>
+                    <p class="text-slate-300">Secure credential authentication with email or staff ID across clinic portals.</p>
                 </div>
                 <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
                     <div class="font-bold text-white mb-1">Strict Role Isolation</div>

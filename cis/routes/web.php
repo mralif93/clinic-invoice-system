@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\PatientController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\CentraFlowSsoClientController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\Patient;
@@ -17,16 +17,18 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-// CentraFlow Single Sign-On (SSO) Routes
+// Authentication Routes
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [CentraFlowSsoClientController::class, 'showLogin'])->name('login');
-    Route::get('/auth/centraflow', [CentraFlowSsoClientController::class, 'redirect'])->name('sso.login');
-    Route::get('/auth/callback', [CentraFlowSsoClientController::class, 'callback'])->name('sso.callback');
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
 });
 
 // Authenticated Admin & Staff Portal Routes
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', [CentraFlowSsoClientController::class, 'logout'])->name('logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Dashboard with Multi-Period Tracking for Admin & POS Drawer for Cashier
     Route::get('/dashboard', function () {

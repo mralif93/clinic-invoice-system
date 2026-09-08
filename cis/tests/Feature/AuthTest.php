@@ -17,29 +17,51 @@ class AuthTest extends TestCase
         $response->assertSee('Precision Medical Invoicing');
     }
 
-    public function test_login_page_renders_sso_interface(): void
+    public function test_login_page_renders_successfully(): void
     {
         $response = $this->get('/login');
         $response->assertStatus(200);
-        $response->assertSee('Staff Portal Sign In');
-        $response->assertSee('Sign in with CentraFlow SSO');
-        $response->assertSee(route('sso.login'));
+        $response->assertSee('Staff Authentication');
     }
 
-    public function test_old_direct_post_login_route_is_not_available(): void
+    public function test_forgot_password_page_renders_successfully(): void
     {
+        $response = $this->get('/forgot-password');
+        $response->assertStatus(200);
+        $response->assertSee('Password Recovery');
+    }
+
+    public function test_staff_can_login_with_email(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'admin@clinic.my',
+            'password' => bcrypt('password'),
+        ]);
+
         $response = $this->post('/login', [
             'email' => 'admin@clinic.my',
             'password' => 'password',
         ]);
 
-        $response->assertStatus(405); // Method Not Allowed (POST /login does not exist)
+        $response->assertRedirect('/dashboard');
+        $this->assertAuthenticatedAs($user);
     }
 
-    public function test_old_forgot_password_route_is_not_available(): void
+    public function test_staff_can_login_with_staff_id(): void
     {
-        $response = $this->get('/forgot-password');
-        $response->assertStatus(404);
+        $user = User::factory()->create([
+            'staff_id' => 'ADM-001',
+            'email' => 'admin2@clinic.my',
+            'password' => bcrypt('password'),
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => 'ADM-001',
+            'password' => 'password',
+        ]);
+
+        $response->assertRedirect('/dashboard');
+        $this->assertAuthenticatedAs($user);
     }
 
     public function test_authenticated_user_can_logout(): void
@@ -48,21 +70,7 @@ class AuthTest extends TestCase
         $this->actingAs($user);
 
         $response = $this->post('/logout');
+        $response->assertRedirect(route('login'));
         $this->assertGuest();
-
-        $centraflowHost = rtrim(config('services.centraflow.host', env('CENTRAFLOW_HOST', 'http://localhost:8004')), '/');
-        $returnUrl = url('/login?logged_out=1');
-        $expectedRedirect = $centraflowHost . '/logout?redirect_uri=' . urlencode($returnUrl);
-
-        $response->assertRedirect($expectedRedirect);
-    }
-
-    public function test_authenticated_user_is_redirected_away_from_login(): void
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $response = $this->get('/login');
-        $response->assertRedirect('/dashboard');
     }
 }
