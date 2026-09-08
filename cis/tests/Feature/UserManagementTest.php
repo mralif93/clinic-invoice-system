@@ -203,4 +203,43 @@ class UserManagementTest extends TestCase
 
         $this->assertDatabaseHas('roles', ['id' => $this->adminRole->id]);
     }
+
+    public function test_admin_can_access_user_create_page()
+    {
+        $response = $this->actingAs($this->admin)->get(route('admin.users.create'));
+        $response->assertStatus(200);
+        $response->assertSee('Register Staff Account');
+        $response->assertSee('Full Legal / Practitioner Name');
+        $response->assertSee('Official Work Email');
+    }
+
+    public function test_admin_can_access_user_edit_page()
+    {
+        $response = $this->actingAs($this->admin)->get(route('admin.users.edit', $this->staff->id));
+        $response->assertStatus(200);
+        $response->assertSee('Edit Staff Personnel');
+        $response->assertSee($this->staff->email);
+    }
+
+    public function test_admin_can_access_user_show_profile_page()
+    {
+        $response = $this->actingAs($this->admin)->get(route('admin.users.show', $this->staff->id));
+        $response->assertStatus(200);
+        $response->assertSee('Staff Profile');
+        $response->assertSee($this->staff->name);
+        $response->assertSee('Personnel Identity');
+        $response->assertSee('Invoices Authored by Staff');
+    }
+
+    public function test_user_model_role_and_permission_unit_methods()
+    {
+        $this->assertTrue($this->admin->isAdmin());
+        $this->assertFalse($this->admin->isStaff());
+        $this->assertTrue($this->admin->hasPermission('manage_users'));
+        $this->assertFalse($this->admin->hasPermission('non_existent_perm'));
+
+        $this->assertFalse($this->staff->isAdmin());
+        $this->assertTrue($this->staff->isStaff());
+        $this->assertTrue($this->staff->isActive());
+    }
 }

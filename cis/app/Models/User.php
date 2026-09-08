@@ -67,6 +67,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Invoices created by this user
+     */
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, 'user_id');
+    }
+
+    /**
+     * Payments collected / processed by this user (as cashier)
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'user_id');
+    }
+
+    /**
      * Dynamic role attribute for backward compatibility with existing Blade layouts and views.
      * Returns the assigned role display_name or fallback to stored/default role.
      */

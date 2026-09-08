@@ -125,7 +125,7 @@ Route::middleware('auth')->group(function () {
 
     // Module 8: Staff User & Role Identity Management (Admin Only)
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
-        Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
         Route::post('users/{user}/reset-password', [\App\Http\Controllers\Admin\UserController::class, 'resetPassword'])->name('users.reset-password');
         Route::post('users/{user}/toggle-status', [\App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
         Route::resource('roles', \App\Http\Controllers\Admin\RoleController::class)->only(['index', 'store', 'update', 'destroy']);

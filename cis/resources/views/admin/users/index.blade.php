@@ -239,7 +239,16 @@
                                 <!-- Actions Suite -->
                                 <td class="py-4 px-4 sm:px-6 text-right">
                                     <div class="inline-flex items-center gap-1.5 justify-end">
-                                        <!-- Edit Modal Trigger -->
+                                        <!-- Show Profile Page Link -->
+                                        <a 
+                                            href="{{ route('admin.users.show', $user->id) }}"
+                                            class="p-2 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 dark:hover:text-indigo-400 transition"
+                                            title="View Staff Profile & History"
+                                        >
+                                            <i class="bx bx-show text-base"></i>
+                                        </a>
+
+                                        <!-- Edit Modal / Page Link -->
                                         <button 
                                             type="button" 
                                             onclick='openEditUserModal(@json($user), @json($user->roles->pluck("id")))'

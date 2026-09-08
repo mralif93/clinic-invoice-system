@@ -55,6 +55,49 @@ class UserController extends Controller
     }
 
     /**
+     * Show the form for creating a new staff account.
+     */
+    public function create(): View
+    {
+        $roles = Role::orderBy('name')->get();
+        return view('admin.users.create', compact('roles'));
+    }
+
+    /**
+     * Display the specified staff user profile, activities, and operational metrics.
+     */
+    public function show(User $user): View
+    {
+        $user->load(['roles.permissions', 'invoices' => fn($q) => $q->latest()->take(10), 'payments' => fn($q) => $q->latest()->take(10)]);
+
+        $activityLogs = AuditLog::where('user_id', $user->id)
+            ->orWhere('record_id', $user->staff_id)
+            ->orWhere('record_id', "USER-{$user->id}")
+            ->latest()
+            ->take(15)
+            ->get();
+
+        $metrics = [
+            'total_invoices_generated' => $user->invoices()->count(),
+            'total_invoiced_amount' => (float)$user->invoices()->sum('total_amount'),
+            'total_payments_collected' => (float)$user->payments()->sum('amount'),
+            'last_collected_payment' => $user->payments()->latest()->first(),
+        ];
+
+        return view('admin.users.show', compact('user', 'activityLogs', 'metrics'));
+    }
+
+    /**
+     * Show the form for editing the specified staff user.
+     */
+    public function edit(User $user): View
+    {
+        $roles = Role::orderBy('name')->get();
+        $user->load('roles');
+        return view('admin.users.edit', compact('user', 'roles'));
+    }
+
+    /**
      * Store a newly created clinic staff or doctor account.
      */
     public function store(Request $request): RedirectResponse
