@@ -21,14 +21,14 @@ class AuthTest extends TestCase
     {
         $response = $this->get('/login');
         $response->assertStatus(200);
-        $response->assertSee('Staff Authentication');
+        $response->assertSee('Staff Portal Sign In');
     }
 
     public function test_forgot_password_page_renders_successfully(): void
     {
         $response = $this->get('/forgot-password');
         $response->assertStatus(200);
-        $response->assertSee('Password Recovery');
+        $response->assertSee('Recover Password');
     }
 
     public function test_staff_can_login_with_email(): void

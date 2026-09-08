@@ -1,133 +1,156 @@
-<x-layouts.public title="Staff & Admin Login">
+<x-layouts.public title="Staff Portal Sign In - ClinicFlow">
 
-    <div class="min-h-[calc(100vh-14rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
-        <div class="w-full max-w-md animate__animated animate__fadeInUp animate__faster">
+<div class="min-h-[calc(100vh-14rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+    <div class="w-full max-w-[440px] animate__animated animate__fadeInUp animate__faster">
+        
+        <!-- Card Container -->
+        <div class="bg-white dark:bg-slate-900 rounded-[2.25rem] border border-slate-200/80 dark:border-slate-800 shadow-[0_25px_60px_-15px_rgba(99,102,241,0.18)] p-8 sm:p-10 transition-all text-left">
+            
+            <!-- Header Icon & Brand -->
+            <div class="flex flex-col items-center text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-b from-indigo-500 via-indigo-600 to-blue-600 text-white shadow-[0_12px_24px_-4px_rgba(99,102,241,0.4)] mb-4">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M21 7.28V5c0-1.1-.9-2-2-2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-2.28c.59-.35 1-.98 1-1.72V9c0-.74-.41-1.37-1-1.72zM20 9v6h-7V9h7zM5 19V5h14v2h-6c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h6v2H5z"/>
+                        <circle cx="16" cy="12" r="1.5"/>
+                    </svg>
+                </div>
+                <h1 class="text-2xl sm:text-[1.65rem] font-extrabold text-slate-900 dark:text-white tracking-tight">Staff Portal Sign In</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium max-w-[280px] leading-relaxed">
+                    Access clinical billing, patient invoicing, and cashier terminal
+                </p>
+            </div>
 
-            <!-- Login Card -->
-            <x-card class="p-2 sm:p-4 shadow-2xl shadow-indigo-500/10">
-                
-                <!-- Card Header -->
-                <div class="space-y-2 text-center mb-6 pt-2">
-                    <div class="inline-flex p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 shadow-inner mb-1">
-                        <i class="bx bx-shield-quarter text-3xl"></i>
+            <!-- Dismissible Logout Alert Banner -->
+            @if(session('success') || session('status') || request()->has('logged_out'))
+                <div id="logout-alert" class="mb-6 px-4 py-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between gap-3 animate__animated animate__fadeIn">
+                    <div class="flex items-center gap-2.5 text-left">
+                        <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="font-medium">{{ session('success') ?? session('status') ?? 'You have been logged out securely.' }}</span>
                     </div>
-                    <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Staff Authentication</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Enter your official clinic credentials to access billing</p>
+                    <button type="button" onclick="document.getElementById('logout-alert').remove()" class="text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-200 transition p-0.5 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            @endif
+
+            <!-- Form -->
+            <form action="{{ route('login') }}" method="POST" class="space-y-5">
+                @csrf
+
+                <!-- Email or Staff ID Input -->
+                <div>
+                    <label for="email" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                        Work Email or Staff ID
+                    </label>
+                    <div class="relative rounded-xl shadow-xs">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-lg">
+                            <i class="bx bx-envelope"></i>
+                        </div>
+                        <input
+                            type="text"
+                            name="email"
+                            id="email"
+                            required
+                            value="{{ old('email', 'admin@clinic.my') }}"
+                            autocomplete="username"
+                            placeholder="admin@clinic.my or ADM-001"
+                            class="block w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/80 focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white placeholder:text-slate-400 transition-all outline-none"
+                        >
+                    </div>
+                    @error('email')
+                        <p class="mt-1.5 text-xs text-rose-600 font-medium flex items-center gap-1">
+                            <i class="bx bx-error-circle"></i>
+                            {{ $message }}
+                        </p>
+                    @enderror
                 </div>
 
-                <!-- Flash Alerts -->
-                @if (session('success'))
-                    <x-alert type="success" class="mb-4">
-                        {{ session('success') }}
-                    </x-alert>
-                @endif
-
-                @if (session('status'))
-                    <x-alert type="info" class="mb-4">
-                        {{ session('status') }}
-                    </x-alert>
-                @endif
-
-                @if ($errors->any())
-                    <x-alert type="danger" class="mb-4">
-                        <ul class="list-disc list-inside space-y-1">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </x-alert>
-                @endif
-
-                <!-- Form -->
-                <form action="{{ route('login') }}" method="POST" class="space-y-4">
-                    @csrf
-
-                    <!-- Email or Staff ID Input Component -->
-                    <x-input
-                        label="Email Address or Staff ID"
-                        name="email"
-                        id="email"
-                        value="admin@clinic.my"
-                        icon="bx bx-user"
-                        placeholder="admin@clinic.my or ADM-001"
-                        required
-                    />
-
-                    <!-- Password Input Component -->
-                    <div class="space-y-1.5">
-                        <div class="flex items-center justify-between">
-                            <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                                Password
-                            </label>
-                            <a href="{{ route('password.request') }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition">
-                                Forgot password?
-                            </a>
-                        </div>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                                <i class="bx bx-lock-alt text-lg"></i>
-                            </div>
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                required
-                                placeholder="••••••••"
-                                value="password"
-                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition"
-                            >
-                        </div>
-                    </div>
-
-                    <!-- Remember Me -->
-                    <div class="flex items-center justify-between pt-1">
-                        <label class="inline-flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-white dark:focus:ring-offset-slate-900">
-                            <span class="text-xs text-slate-600 dark:text-slate-400">Remember this station</span>
+                <!-- Password Input -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="password" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                            Password
                         </label>
+                        <a href="{{ route('password.request') }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline transition-colors">
+                            Forgot password?
+                        </a>
                     </div>
-
-                    <!-- Submit Button Component -->
-                    <x-button type="submit" variant="primary" size="md" icon="bx bx-log-in-circle" class="w-full mt-2">
-                        Authenticate Station
-                    </x-button>
-                </form>
-
-                <!-- Pre-configured Test Accounts Quick Fill -->
-                <div class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 space-y-2">
-                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                        <i class="bx bx-key text-indigo-600 dark:text-indigo-400"></i>
-                        <span>Default Clinic Credentials (Seeded)</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <button
-                            type="button"
-                            onclick="document.getElementById('email').value='admin@clinic.my'; document.getElementById('password').value='password';"
-                            class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-left hover:border-indigo-500 transition cursor-pointer"
+                    <div class="relative rounded-xl shadow-xs">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-lg">
+                            <i class="bx bx-lock-alt"></i>
+                        </div>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            required
+                            value="password"
+                            autocomplete="current-password"
+                            placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                            class="block w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/80 focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white placeholder:text-slate-400 transition-all outline-none"
                         >
-                            <div class="font-bold text-slate-900 dark:text-white flex items-center justify-between">
-                                <span>Admin / Doctor</span>
-                                <i class="bx bx-check text-xs text-emerald-600 dark:text-emerald-400"></i>
-                            </div>
-                            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">admin@clinic.my</div>
-                        </button>
-                        <button
-                            type="button"
-                            onclick="document.getElementById('email').value='cashier@clinic.my'; document.getElementById('password').value='password';"
-                            class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-left hover:border-indigo-500 transition cursor-pointer"
-                        >
-                            <div class="font-bold text-slate-900 dark:text-white flex items-center justify-between">
-                                <span>Cashier / Staff</span>
-                                <i class="bx bx-check text-xs text-emerald-600 dark:text-emerald-400"></i>
-                            </div>
-                            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">cashier@clinic.my</div>
-                        </button>
                     </div>
+                    @error('password')
+                        <p class="mt-1.5 text-xs text-rose-600 font-medium flex items-center gap-1">
+                            <i class="bx bx-error-circle"></i>
+                            {{ $message }}
+                        </p>
+                    @enderror
                 </div>
 
-            </x-card>
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between pt-1">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="remember" id="remember" class="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Remember credentials</span>
+                    </label>
+                </div>
 
+                <!-- Submit Button -->
+                <button
+                    type="submit"
+                    class="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/30 border border-indigo-500/30 active:scale-[0.99] transition-all cursor-pointer"
+                >
+                    <i class="bx bx-log-in text-lg"></i>
+                    <span>Authenticate &amp; Enter</span>
+                </button>
+            </form>
+
+            <!-- Quick Demo Credentials Switcher -->
+            <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 text-center">
+                    Quick Role Profiles (Click to prefill)
+                </p>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button type="button" onclick="fillCreds('admin@clinic.my')" class="p-2.5 text-left rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 transition-all cursor-pointer">
+                        <span class="font-bold block text-slate-900 dark:text-white flex items-center gap-1">
+                            <i class="bx bxs-badge-check text-indigo-600"></i> Admin / Doctor
+                        </span>
+                        <span class="text-[10px] text-slate-400 block font-mono">admin@clinic.my</span>
+                    </button>
+                    <button type="button" onclick="fillCreds('cashier@clinic.my')" class="p-2.5 text-left rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 transition-all cursor-pointer">
+                        <span class="font-bold block text-slate-900 dark:text-white flex items-center gap-1">
+                            <i class="bx bx-user-pin text-purple-600"></i> Cashier / Staff
+                        </span>
+                        <span class="text-[10px] text-slate-400 block font-mono">cashier@clinic.my</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+
+@push('scripts')
+<script>
+function fillCreds(email) {
+    document.getElementById('email').value = email;
+    document.getElementById('password').value = 'password';
+}
+</script>
+@endpush
 
 </x-layouts.public>
