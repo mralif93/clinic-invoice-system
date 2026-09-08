@@ -115,11 +115,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/analytics', [ReportController::class, 'revenueAnalytics'])->name('analytics');
     });
 
-    // Module 6 & 7: Governance, Settings & Audit Logs
-    Route::prefix('admin/settings')->name('admin.settings.')->group(function () {
+    // Module 6 & 7: Governance, Settings & Audit Logs (Admin Only)
+    Route::prefix('admin/settings')->name('admin.settings.')->middleware('admin')->group(function () {
         Route::get('/profile', [SettingController::class, 'clinicProfile'])->name('profile');
         Route::put('/profile', [SettingController::class, 'updateClinicProfile'])->name('profile.update');
         Route::get('/templates', [SettingController::class, 'invoiceTemplates'])->name('templates');
         Route::get('/audit-logs', [SettingController::class, 'auditLogs'])->name('audit-logs');
+    });
+
+    // Module 8: Staff User & Role Identity Management (Admin Only)
+    Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::post('users/{user}/reset-password', [\App\Http\Controllers\Admin\UserController::class, 'resetPassword'])->name('users.reset-password');
+        Route::post('users/{user}/toggle-status', [\App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
+        Route::resource('roles', \App\Http\Controllers\Admin\RoleController::class)->only(['index', 'store', 'update', 'destroy']);
     });
 });

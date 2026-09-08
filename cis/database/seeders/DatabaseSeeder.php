@@ -9,6 +9,8 @@ use App\Models\InvoiceItem;
 use App\Models\Item;
 use App\Models\Patient;
 use App\Models\Payment;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -23,34 +25,198 @@ class DatabaseSeeder extends Seeder
         // 0. Ensure Clinic Profile Singleton exists
         ClinicProfile::getActiveProfile();
 
-        // 1. Seed Staff & Doctor Users
+        // 1. Seed Roles & Permissions (Standardized identical to HRMS & Payroll)
+        $rolesData = [
+            [
+                'name' => 'super_admin',
+                'display_name' => 'Super Administrator',
+                'description' => 'Unrestricted access to all clinical operations, billing, financial settings, and user governance.',
+                'is_system' => true,
+            ],
+            [
+                'name' => 'doctor',
+                'display_name' => 'Doctor / Clinical Lead',
+                'description' => 'Full clinical consultation authority, invoice creation, medication prescription, and discharge clearance.',
+                'is_system' => true,
+            ],
+            [
+                'name' => 'admin',
+                'display_name' => 'Clinic Administrator',
+                'description' => 'Administrative control over catalog items, reports, audit logs, and clinic profile parameters.',
+                'is_system' => true,
+            ],
+            [
+                'name' => 'cashier',
+                'display_name' => 'Front-Desk Cashier',
+                'description' => 'POS tender settlement, thermal receipt & A4 invoice printing, patient intake, and daily cash drawer balancing.',
+                'is_system' => true,
+            ],
+            [
+                'name' => 'receptionist',
+                'display_name' => 'Clinic Receptionist',
+                'description' => 'Patient queue management, record intake, demographic data entry, and appointment scheduling.',
+                'is_system' => false,
+            ],
+        ];
+
+        $roles = [];
+        foreach ($rolesData as $r) {
+            $roles[$r['name']] = Role::updateOrCreate(['name' => $r['name']], $r);
+        }
+
+        // Permissions Matrix grouped by module
+        $permissionsData = [
+            // Invoices & Billing
+            ['name' => 'invoices.view', 'display_name' => 'View Invoices Directory', 'module' => 'invoices', 'description' => 'Inspect patient bills and payment states'],
+            ['name' => 'invoices.create', 'display_name' => 'Create & Bill Invoices', 'module' => 'invoices', 'description' => 'Initiate POS invoice line items and consultation fees'],
+            ['name' => 'invoices.settle', 'display_name' => 'Tender & Settle Payments', 'module' => 'invoices', 'description' => 'Record cash, card, DuitNow QR, and panel payments'],
+            ['name' => 'invoices.void', 'display_name' => 'Void & Cancel Invoices', 'module' => 'invoices', 'description' => 'Authorize cancellation of active invoices with mandatory reason'],
+
+            // Patients Master
+            ['name' => 'patients.view', 'display_name' => 'View Patient Directory', 'module' => 'patients', 'description' => 'Search and review patient profiles'],
+            ['name' => 'patients.manage', 'display_name' => 'Manage Patient Records', 'module' => 'patients', 'description' => 'Register and update patient demographics, IC, and medical alerts'],
+
+            // Catalog & Inventory
+            ['name' => 'items.view', 'display_name' => 'View Item Catalog', 'module' => 'items', 'description' => 'Review treatment, procedure, and medication tariffs'],
+            ['name' => 'items.manage', 'display_name' => 'Manage Catalog & Tariffs', 'module' => 'items', 'description' => 'Add, price, and adjust stocks for medications and procedures'],
+
+            // Accounting & Reports
+            ['name' => 'reports.cash_drawer', 'display_name' => 'Access Daily Cash Drawer', 'module' => 'reports', 'description' => 'Perform shift opening, float counts, and end-of-day balancing'],
+            ['name' => 'reports.bank_recon', 'display_name' => 'EDC Bank Reconciliation', 'module' => 'reports', 'description' => 'Match terminal batch reports and toggle bank reconciliation status'],
+            ['name' => 'reports.analytics', 'display_name' => 'View Revenue Analytics', 'module' => 'reports', 'description' => 'Inspect monthly earnings, debt aging, and top clinical revenue items'],
+
+            // Governance & Settings
+            ['name' => 'settings.profile', 'display_name' => 'Manage Clinic Profile', 'module' => 'settings', 'description' => 'Configure legal practice registration, tax IDs, and receipt notes'],
+            ['name' => 'settings.audit', 'display_name' => 'Inspect Audit Trail Logs', 'module' => 'settings', 'description' => 'Review immutable compliance activity logs and void event trails'],
+
+            // Users & Access Control
+            ['name' => 'users.view', 'display_name' => 'View System Users', 'module' => 'users', 'description' => 'Inspect staff user listings and security credentials'],
+            ['name' => 'users.manage', 'display_name' => 'Manage Staff & Roles', 'module' => 'users', 'description' => 'Create staff accounts, assign roles, and toggle access states'],
+        ];
+
+        $allPermissionIds = [];
+        foreach ($permissionsData as $p) {
+            $createdPerm = Permission::updateOrCreate(['name' => $p['name']], $p);
+            $allPermissionIds[$p['name']] = $createdPerm->id;
+        }
+
+        // Map Permissions to Roles
+        $roles['super_admin']->permissions()->sync(array_values($allPermissionIds));
+
+        $roles['doctor']->permissions()->sync([
+            $allPermissionIds['invoices.view'],
+            $allPermissionIds['invoices.create'],
+            $allPermissionIds['invoices.settle'],
+            $allPermissionIds['invoices.void'],
+            $allPermissionIds['patients.view'],
+            $allPermissionIds['patients.manage'],
+            $allPermissionIds['items.view'],
+            $allPermissionIds['reports.cash_drawer'],
+            $allPermissionIds['reports.analytics'],
+        ]);
+
+        $roles['admin']->permissions()->sync([
+            $allPermissionIds['invoices.view'],
+            $allPermissionIds['invoices.void'],
+            $allPermissionIds['patients.view'],
+            $allPermissionIds['items.view'],
+            $allPermissionIds['items.manage'],
+            $allPermissionIds['reports.cash_drawer'],
+            $allPermissionIds['reports.bank_recon'],
+            $allPermissionIds['reports.analytics'],
+            $allPermissionIds['settings.profile'],
+            $allPermissionIds['settings.audit'],
+            $allPermissionIds['users.view'],
+            $allPermissionIds['users.manage'],
+        ]);
+
+        $roles['cashier']->permissions()->sync([
+            $allPermissionIds['invoices.view'],
+            $allPermissionIds['invoices.create'],
+            $allPermissionIds['invoices.settle'],
+            $allPermissionIds['patients.view'],
+            $allPermissionIds['patients.manage'],
+            $allPermissionIds['items.view'],
+            $allPermissionIds['reports.cash_drawer'],
+        ]);
+
+        $roles['receptionist']->permissions()->sync([
+            $allPermissionIds['patients.view'],
+            $allPermissionIds['patients.manage'],
+            $allPermissionIds['invoices.view'],
+            $allPermissionIds['items.view'],
+        ]);
+
+        // 2. Seed Default Staff & Doctor Users
         $admin = User::updateOrCreate(
             ['email' => 'admin@clinic.my'],
             [
                 'staff_id' => 'ADM-001',
+                'employee_code' => 'DOC-001',
                 'name' => 'Dr. Aiman Hakim',
                 'phone' => '+60123456789',
+                'department' => 'Medical & Clinical Services',
+                'designation' => 'Lead Medical Officer & Practice Director',
                 'role' => 'admin',
                 'status' => 'active',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]
         );
+        $admin->roles()->sync([$roles['super_admin']->id, $roles['doctor']->id]);
 
         $cashier = User::updateOrCreate(
             ['email' => 'cashier@clinic.my'],
             [
                 'staff_id' => 'STF-001',
+                'employee_code' => 'CSH-001',
                 'name' => 'Nurul Ain',
                 'phone' => '+60198765432',
+                'department' => 'Front-Desk Operations',
+                'designation' => 'Senior Cashier & Patient Billing Officer',
                 'role' => 'staff',
                 'status' => 'active',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]
         );
+        $cashier->roles()->sync([$roles['cashier']->id]);
 
-        // 2. Seed Master Items Catalog (50 Clinical Catalog Records)
+        $doctor2 = User::updateOrCreate(
+            ['email' => 'sarah@clinic.my'],
+            [
+                'staff_id' => 'DOC-002',
+                'employee_code' => 'DOC-002',
+                'name' => 'Dr. Sarah Tan',
+                'phone' => '+60134567890',
+                'department' => 'Pediatrics & Family Medicine',
+                'designation' => 'Consultant Pediatrician',
+                'role' => 'doctor',
+                'status' => 'active',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
+        );
+        $doctor2->roles()->sync([$roles['doctor']->id]);
+
+        $receptionist = User::updateOrCreate(
+            ['email' => 'reception@clinic.my'],
+            [
+                'staff_id' => 'STF-002',
+                'employee_code' => 'RCP-002',
+                'name' => 'Siti Aminah',
+                'phone' => '+60176543210',
+                'department' => 'Front-Desk Operations',
+                'designation' => 'Clinic Receptionist',
+                'role' => 'receptionist',
+                'status' => 'active',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
+        );
+        $receptionist->roles()->sync([$roles['receptionist']->id]);
+
+        // 3. Seed Master Items Catalog (50 Clinical Catalog Records)
         $catalogTemplates = [
             // Consultations
             ['name' => 'Standard General Consultation', 'category' => 'Consultation', 'price' => 45.00, 'stock' => 999],
@@ -68,15 +234,15 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Paracetamol 500mg (10 tabs)', 'category' => 'Medication', 'price' => 8.00, 'stock' => 350],
             ['name' => 'Amoxicillin 500mg (20 caps)', 'category' => 'Medication', 'price' => 25.00, 'stock' => 120],
             ['name' => 'Cetirizine 10mg (10 tabs)', 'category' => 'Medication', 'price' => 12.50, 'stock' => 180],
-            ['name' => 'Ibuprofen 400mg (10 tabs)', 'category' => 'Medication', 'price' => 14.00, 'stock' => 45], // Low stock
+            ['name' => 'Ibuprofen 400mg (10 tabs)', 'category' => 'Medication', 'price' => 14.00, 'stock' => 45],
             ['name' => 'Augmentin 625mg (14 tabs)', 'category' => 'Medication', 'price' => 48.00, 'stock' => 60],
             ['name' => 'Metformin 500mg (30 tabs)', 'category' => 'Medication', 'price' => 15.00, 'stock' => 210],
             ['name' => 'Amlodipine 5mg (30 tabs)', 'category' => 'Medication', 'price' => 18.00, 'stock' => 140],
             ['name' => 'Perindopril 4mg (30 tabs)', 'category' => 'Medication', 'price' => 32.00, 'stock' => 85],
-            ['name' => 'Omeprazole 20mg (14 caps)', 'category' => 'Medication', 'price' => 22.00, 'stock' => 30], // Low stock
+            ['name' => 'Omeprazole 20mg (14 caps)', 'category' => 'Medication', 'price' => 22.00, 'stock' => 30],
             ['name' => 'Loratadine 10mg (10 tabs)', 'category' => 'Medication', 'price' => 10.00, 'stock' => 190],
-            ['name' => 'Salbutamol Inhaler 100mcg', 'category' => 'Medication', 'price' => 28.00, 'stock' => 25], // Low stock
-            ['name' => 'Azithromycin 250mg (6 tabs)', 'category' => 'Medication', 'price' => 38.00, 'stock' => 40], // Low stock
+            ['name' => 'Salbutamol Inhaler 100mcg', 'category' => 'Medication', 'price' => 28.00, 'stock' => 25],
+            ['name' => 'Azithromycin 250mg (6 tabs)', 'category' => 'Medication', 'price' => 38.00, 'stock' => 40],
             ['name' => 'Glibenclamide 5mg (30 tabs)', 'category' => 'Medication', 'price' => 12.00, 'stock' => 110],
             ['name' => 'Simvastatin 20mg (30 tabs)', 'category' => 'Medication', 'price' => 24.00, 'stock' => 95],
             ['name' => 'Atorvastatin 20mg (30 tabs)', 'category' => 'Medication', 'price' => 42.00, 'stock' => 70],
@@ -134,7 +300,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 3. Seed Patients Master (50 Patient Records)
+        // 4. Seed Patients Master (50 Patient Records)
         $malaysianFirstNames = [
             'Muhammad', 'Nurul', 'Ahmad', 'Siti', 'Chong', 'Tan', 'Lim', 'Lee', 'Kavitha', 'Suresh',
             'Farah', 'Daniel', 'Aina', 'Bryan', 'Mei Ling', 'Hafiz', 'Priya', 'Karthik', 'Zulhilmi', 'Aisyah',
@@ -183,7 +349,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 4. Seed Invoices & Line Items (50 Invoices)
+        // 5. Seed Invoices & Line Items (50 Invoices)
         $statuses = ['paid', 'paid', 'paid', 'paid', 'partial', 'unpaid', 'void'];
         $doctors = ['Dr. Aiman Hakim', 'Dr. Siti Nurhaliza', 'Dr. Jason Lee', 'Dr. Kavitha Raman'];
         $paymentMethods = ['cash', 'card', 'qr', 'transfer', 'panel'];
@@ -197,7 +363,6 @@ class DatabaseSeeder extends Seeder
             $status = $statuses[($invIdx - 1) % count($statuses)];
             $doctor = $doctors[($invIdx - 1) % count($doctors)];
 
-            // Create 1 to 3 items per invoice
             $numItems = rand(1, 3);
             $subtotal = 0;
             $itemsForInvoice = [];
@@ -229,9 +394,7 @@ class DatabaseSeeder extends Seeder
                 'unpaid', 'void' => 0.00,
             };
 
-            // Days offset within the last 30 days
             $createdDate = now()->subDays(rand(0, 28))->subHours(rand(1, 10));
-
             $invoiceNumber = 'INV-' . $createdDate->format('Ymd') . '-' . str_pad($invIdx + 100, 4, '0', STR_PAD_LEFT);
 
             $invoice = Invoice::updateOrCreate(
@@ -255,7 +418,6 @@ class DatabaseSeeder extends Seeder
 
             $createdInvoices[] = $invoice;
 
-            // Seed invoice line items
             foreach ($itemsForInvoice as $lineItem) {
                 InvoiceItem::updateOrCreate(
                     ['invoice_id' => $invoice->id, 'item_name' => $lineItem['item_name']],
@@ -263,7 +425,6 @@ class DatabaseSeeder extends Seeder
                 );
             }
 
-            // If invoice has paid amount, create Payment record
             if ($paidAmount > 0) {
                 $method = $paymentMethods[rand(0, count($paymentMethods) - 1)];
                 $bank = ($method !== 'cash') ? $banks[rand(0, count($banks) - 1)] : null;
@@ -288,7 +449,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 5. Ensure at least 50 Electronic Payments for Bank Reconciliation
+        // 6. Ensure at least 50 Electronic Payments for Bank Reconciliation
         $electronicCount = Payment::where('payment_method', '!=', 'cash')->count();
         if ($electronicCount < 50) {
             $needed = 50 - $electronicCount;
@@ -314,7 +475,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 6. Seed Immutable Audit Logs (50 Records)
+        // 7. Seed Immutable Audit Logs (50 Records)
         $auditActions = [
             ['action' => 'INVOICE_CREATED', 'module' => 'Billing', 'desc' => 'Generated new medical POS invoice with consultation charges'],
             ['action' => 'PAYMENT_RECEIVED', 'module' => 'Billing', 'desc' => 'Tendered and settled payment transaction via cashier terminal'],
@@ -323,6 +484,7 @@ class DatabaseSeeder extends Seeder
             ['action' => 'PATIENT_REGISTERED', 'module' => 'MasterData', 'desc' => 'Registered new patient profile with penicillin allergy alerts'],
             ['action' => 'ITEM_UPDATED', 'module' => 'MasterData', 'desc' => 'Adjusted clinical consultation rate and restocked pharmaceutical inventory'],
             ['action' => 'BANK_RECONCILED', 'module' => 'Billing', 'desc' => 'Matched EDC credit card batch report against Maybank merchant account'],
+            ['action' => 'USER_CREATED', 'module' => 'Users', 'desc' => 'Created clinic staff user account and assigned RBAC permissions'],
         ];
 
         $currentAuditCount = AuditLog::count();

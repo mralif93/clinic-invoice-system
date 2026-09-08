@@ -165,6 +165,14 @@
                     <div class="px-3 pb-1 text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold">
                         Governance &amp; Settings
                     </div>
+                    <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold transition {{ request()->routeIs('admin.users.*') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 font-bold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white' }}">
+                        <i class="bx bx-user-pin text-lg text-indigo-500 dark:text-indigo-400"></i>
+                        <span>Staff &amp; Identity</span>
+                    </a>
+                    <a href="{{ route('admin.roles.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold transition {{ request()->routeIs('admin.roles.*') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 font-bold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white' }}">
+                        <i class="bx bx-shield-quarter text-lg text-purple-500 dark:text-purple-400"></i>
+                        <span>Access Roles &amp; RBAC</span>
+                    </a>
                     <a href="{{ route('admin.settings.audit-logs') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold transition {{ request()->routeIs('admin.settings.audit-logs') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 font-bold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white' }}">
                         <i class="bx bx-history text-lg text-amber-500 dark:text-amber-400"></i>
                         <span>Audit Trail Logs</span>
@@ -286,6 +294,10 @@
                         <!-- Dropdown Menu Links -->
                         <div class="py-1.5 px-2 space-y-0.5">
                             @if(auth()->user()?->isAdmin())
+                                <a href="{{ route('admin.users.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-indigo-600 dark:hover:text-white transition">
+                                    <i class="bx bx-user-pin text-base text-slate-400"></i>
+                                    <span>Staff &amp; Identity</span>
+                                </a>
                                 <a href="{{ route('admin.settings.profile') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-indigo-600 dark:hover:text-white transition">
                                     <i class="bx bx-clinic text-base text-slate-400"></i>
                                     <span>Clinic Profile</span>
